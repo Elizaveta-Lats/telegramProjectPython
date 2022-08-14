@@ -11,7 +11,7 @@ bot = telebot.TeleBot(TOKEN)
 
 time_of_msg = time(0, 10)  # 00:10:00 по МСК, время, после которого нужно публиковать сообщения
 
-birthdays_and_names = {'01-06': ["Итто", "Паймон"], '24-07': ["Сиканоин Хэйдзо"], '15-08': ["Коллеи"]}
+birthdays_and_names = {'01.06': ["Итто", "Паймон"], '24.07': ["Сиканоин Хэйдзо"], '15.08': ["Коллеи"]}
 
 
 @bot.message_handler(commands=['start', 'go'])
@@ -95,12 +95,12 @@ def check_time():
     тогда метод публикует сообщение на канале и делает отметку, что он это сделал.
     Отметка сбрасывается при наступлении следующего дня
     """
-    day1 = ''
+    saved_date = ''
     is_msg_sent = False
     while True:
-        today = date.today().strftime("%d-%m")
-        if day1 != today:
-            day1 = today
+        today = date.today().strftime("%d.%m")
+        if saved_date != today:
+            saved_date = today
             is_msg_sent = False
 
         for birthday in birthdays_and_names.keys():
