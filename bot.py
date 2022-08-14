@@ -29,6 +29,8 @@ def get_text_messages(message):
 def send_birthday_msg(i):
     greeting = birthdays_and_greetings[1][i]
     bot.send_message("@birthdaysGenshin", str(greeting))
+    # когда будет пак картинок для сообщений, надо заменить send_message на send_photo
+    # bot.send_photo("@birthdaysGenshin", photo, caption='желаемый текст')
 
 
 birthdays = birthdays_and_greetings[0]
