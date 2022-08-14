@@ -9,14 +9,9 @@ import time as timer
 TOKEN = config('token', default='')
 bot = telebot.TeleBot(TOKEN)
 
-time_of_msg = time(0, 10)  # 00:10:00 по МСК, время публикации сообщений
+time_of_msg = time(0, 10)  # 00:10:00 по МСК, время, после которого нужно публиковать сообщения
 
-birthdays_and_greetings = [['13-08',
-                            '14-08',
-                            '15-08',
-                            ],
-                           [["Эмбер"], ["Сангономия Кокоми", "Кудзё Сара"], ["Ци Ци"]]
-                           ]
+birthdays_and_names = {'01-06': ["Итто", "Паймон"], '24-07': ["Сиканоин Хэйдзо"], '15-08': ["Коллеи"]}
 
 
 @bot.message_handler(commands=['start', 'go'])
@@ -49,9 +44,6 @@ def send_birthday_msg(name):
     # bot.send_photo("@birthdaysGenshin", photo, caption='желаемый текст')
 
 
-birthdays = birthdays_and_greetings[0]
-
-
 def check_time():
     """
     Метод постоянно прокручивает массив дней рождений.
@@ -68,12 +60,11 @@ def check_time():
             day1 = today
             is_msg_sent = False
 
-        for birthday in birthdays:
+        for birthday in birthdays_and_names.keys():
             if birthday == today:
                 time_now = datetime.now().time()
                 if time_now >= time_of_msg and not is_msg_sent:
-                    index = birthdays.index(birthday)
-                    names = birthdays_and_greetings[1][index]
+                    names = birthdays_and_names[birthday]
                     for name in names:
                         send_birthday_msg(name)
                         timer.sleep(15)
