@@ -11,9 +11,9 @@ bot = telebot.TeleBot(TOKEN)
 
 time_of_msg = time(0, 10)  # 00:10:00 по МСК, время публикации сообщений
 
-birthdays_and_greetings = [[date(2022, 8, 13),
-                            date(2022, 8, 14),
-                            date(2022, 8, 15),
+birthdays_and_greetings = [['13-08',
+                            '14-08',
+                            '15-08',
                             ],
                            [["Эмбер"], ["Сангономия Кокоми", "Кудзё Сара"], ["Ци Ци"]]
                            ]
@@ -63,14 +63,13 @@ def check_time():
     day1 = ''
     is_msg_sent = False
     while True:
-        today = str(date.today())[5:]
+        today = date.today().strftime("%d-%m")
         if day1 != today:
             day1 = today
             is_msg_sent = False
 
         for birthday in birthdays:
-            bday = str(birthday)[5:]
-            if bday == today:
+            if birthday == today:
                 time_now = datetime.now().time()
                 if time_now >= time_of_msg and not is_msg_sent:
                     index = birthdays.index(birthday)
