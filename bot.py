@@ -1,14 +1,17 @@
-from datetime import datetime
+from datetime import datetime, date, time
 from decouple import config
 import telebot
-import time
+import time as timer
 
 # в 2:00 по МСК (в 0:00 по времени сервера Европы (GMT+1)) присылаются письма от персонажей
 TOKEN = config('token', default='')
 bot = telebot.TeleBot(TOKEN)
 
-# надо заполнить список датами и поздравлениями
-birthdays_and_greetings = [[datetime(2022, 8, 14, 14, 54), datetime(2022, 8, 14, 14, 15)],
+time_of_msg = time(10)  # 10:00:00 по МСК, время публикации сообщений
+
+birthdays_and_greetings = [[datetime.combine(date(2022, 8, 14), time_of_msg),
+                            datetime.combine(date(2022, 8, 14), time(15, 22))
+                            ],
                            ["ДР 1", "ДР 2"]]
 
 
@@ -24,20 +27,18 @@ def get_text_messages(message):
 
 def send_birthday_msg(i):
     greeting = birthdays_and_greetings[1][i]
-    bot.send_message("@birthdaysGenshin", greeting)
+    bot.send_message("@birthdaysGenshin", str(greeting))
 
 
 birthdays = birthdays_and_greetings[0]
 while True:
     for birthday in birthdays:
-        bday = str(birthday)
-        bday = bday[5:]
-        now = str(datetime.now())
-        now = now[5:19]
+        bday = str(birthday)[5:]
+        now = str(datetime.now())[5:19]
         if bday == now:
             index = birthdays.index(birthday)
             send_birthday_msg(index)
-            time.sleep(60)  # отслеживать микросекунды у меня не вышло (видимо, не успевает поймать момент),
+            timer.sleep(60)  # отслеживать микросекунды у меня не вышло (видимо, не успевает поймать момент),
             # поэтому вот такое засыпание, чтобы он только 1 раз написал
 
 bot.polling(none_stop=True, interval=0)  # не реагирует, поскольку цикл while занял весь поток.
