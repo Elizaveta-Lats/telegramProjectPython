@@ -8,7 +8,7 @@ TOKEN = config('token', default='')
 bot = telebot.TeleBot(TOKEN)
 
 # надо заполнить список датами и поздравлениями
-birthdays_and_greetings = [[datetime(2022, 8, 14, 14, 18), datetime(2022, 8, 14, 14, 15)],
+birthdays_and_greetings = [[datetime(2022, 8, 14, 14, 54), datetime(2022, 8, 14, 14, 15)],
                            ["ДР 1", "ДР 2"]]
 
 
@@ -29,10 +29,13 @@ def send_birthday_msg(i):
 
 birthdays = birthdays_and_greetings[0]
 while True:
-    for bday in birthdays:
-        if datetime.now().month == bday.month and datetime.now().day == bday.day and datetime.now().hour == bday.hour\
-                and datetime.now().minute == bday.minute and datetime.now().second == bday.second:
-            index = birthdays.index(bday)
+    for birthday in birthdays:
+        bday = str(birthday)
+        bday = bday[5:]
+        now = str(datetime.now())
+        now = now[5:19]
+        if bday == now:
+            index = birthdays.index(birthday)
             send_birthday_msg(index)
             time.sleep(60)  # отслеживать микросекунды у меня не вышло (видимо, не успевает поймать момент),
             # поэтому вот такое засыпание, чтобы он только 1 раз написал
