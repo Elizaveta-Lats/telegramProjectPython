@@ -8,7 +8,7 @@ TOKEN = config('token', default='')
 bot = telebot.TeleBot(TOKEN)
 
 # надо заполнить список датами и поздравлениями
-birthdays_and_greetings = [[datetime(2022, 8, 14, 13, 56, 0), datetime(2022, 8, 14, 13, 57, 0)],
+birthdays_and_greetings = [[datetime(2022, 8, 14, 14, 18), datetime(2022, 8, 14, 14, 15)],
                            ["ДР 1", "ДР 2"]]
 
 
@@ -22,8 +22,8 @@ def get_text_messages(message):
         bot.send_message(message.from_user.id, "Я тебя не понимаю. Напиши /help")
 
 
-def send_birthday_msg(index):
-    greeting = birthdays_and_greetings[1][index]
+def send_birthday_msg(i):
+    greeting = birthdays_and_greetings[1][i]
     bot.send_message("@birthdaysGenshin", greeting)
 
 
@@ -34,7 +34,7 @@ while True:
                 and datetime.now().minute == bday.minute and datetime.now().second == bday.second:
             index = birthdays.index(bday)
             send_birthday_msg(index)
-            time.sleep(60)  # отслеживать милисекунды у меня не вышло,
+            time.sleep(60)  # отслеживать микросекунды у меня не вышло (видимо, не успевает поймать момент),
             # поэтому вот такое засыпание, чтобы он только 1 раз написал
 
 bot.polling(none_stop=True, interval=0)  # не реагирует, поскольку цикл while занял весь поток.
