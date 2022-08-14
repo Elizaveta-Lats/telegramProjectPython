@@ -1,17 +1,14 @@
-from datetime import date
-
+from datetime import datetime
 from decouple import config
-import schedule
 import telebot
 import time
 
 # в 2:00 по МСК (в 0:00 по времени сервера Европы (GMT+1)) присылаются письма от персонажей
 TOKEN = config('token', default='')
-index = -1
 bot = telebot.TeleBot(TOKEN)
 
 # надо заполнить список датами и поздравлениями
-birthdays_and_greetings = [[date(2023, 8, 13), date(2022, 8, 14)],
+birthdays_and_greetings = [[datetime(2022, 8, 14, 13, 56, 0), datetime(2022, 8, 14, 13, 57, 0)],
                            ["ДР 1", "ДР 2"]]
 
 
@@ -25,18 +22,20 @@ def get_text_messages(message):
         bot.send_message(message.from_user.id, "Я тебя не понимаю. Напиши /help")
 
 
-def send_birthday_msg():
+def send_birthday_msg(index):
     greeting = birthdays_and_greetings[1][index]
     bot.send_message("@birthdaysGenshin", greeting)
 
 
-schedule.every().day.at("21:32").do(send_birthday_msg)
 birthdays = birthdays_and_greetings[0]
-while True:  # этот цикл отсчитывает время. Он обязателен.
-    for birthday in birthdays:
-        if date.today().day == birthday.day and date.today().month == birthday.month:
-            index = birthdays.index(birthday)
-            schedule.run_pending()
-    time.sleep(28)
+while True:
+    for bday in birthdays:
+        if datetime.now().month == bday.month and datetime.now().day == bday.day and datetime.now().hour == bday.hour\
+                and datetime.now().minute == bday.minute and datetime.now().second == bday.second:
+            index = birthdays.index(bday)
+            send_birthday_msg(index)
+            time.sleep(60)  # отслеживать милисекунды у меня не вышло,
+            # поэтому вот такое засыпание, чтобы он только 1 раз написал
+
 bot.polling(none_stop=True, interval=0)  # не реагирует, поскольку цикл while занял весь поток.
 # Надо разобраться, как сделать второй поток для этого метода
