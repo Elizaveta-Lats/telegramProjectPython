@@ -1,5 +1,6 @@
 from datetime import datetime, date, time
 from decouple import config
+from threading import Thread
 import telebot
 import time as timer
 
@@ -10,7 +11,7 @@ bot = telebot.TeleBot(TOKEN)
 time_of_msg = time(10)  # 10:00:00 по МСК, время публикации сообщений
 
 birthdays_and_greetings = [[datetime.combine(date(2022, 8, 14), time_of_msg),
-                            datetime.combine(date(2022, 8, 14), time(15, 22))
+                            datetime.combine(date(2022, 8, 14), time(16, 48))
                             ],
                            ["ДР 1", "ДР 2"]]
 
@@ -31,15 +32,20 @@ def send_birthday_msg(i):
 
 
 birthdays = birthdays_and_greetings[0]
-while True:
-    for birthday in birthdays:
-        bday = str(birthday)[5:]
-        now = str(datetime.now())[5:19]
-        if bday == now:
-            index = birthdays.index(birthday)
-            send_birthday_msg(index)
-            timer.sleep(60)  # отслеживать микросекунды у меня не вышло (видимо, не успевает поймать момент),
-            # поэтому вот такое засыпание, чтобы он только 1 раз написал
 
-bot.polling(none_stop=True, interval=0)  # не реагирует, поскольку цикл while занял весь поток.
-# Надо разобраться, как сделать второй поток для этого метода
+
+def check_time():
+    while True:
+        for birthday in birthdays:
+            bday = str(birthday)[5:16]
+            now = str(datetime.now())[5:16]
+            if bday == now:
+                index = birthdays.index(birthday)
+                send_birthday_msg(index)
+                timer.sleep(60)  # сон на 1 минуту
+
+
+thread_time = Thread(target=check_time)  # поток для проверки времени
+thread_time.start()
+
+bot.polling(none_stop=True, interval=0)  # поток для проверки сообщений, написанных боту в личку
