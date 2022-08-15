@@ -4,6 +4,9 @@ from threading import Thread
 import telebot
 from telebot import types
 import time as timer
+import pymorphy2
+
+morph = pymorphy2.MorphAnalyzer()
 
 # в 2:00 по МСК (в 0:00 по времени сервера Европы (GMT+1)) присылаются письма от персонажей
 TOKEN = config('token', default='')
@@ -55,7 +58,7 @@ def bdays_that_month_handler(message):
 
 @bot.message_handler(commands=['bdaysselectedmonth'])
 def bdays_selected_month_handler(message):
-    send_selected_month_bdays(message)
+    send_month_menu(message)
 
 
 @bot.message_handler(commands=['bdayclosesttomybday'])
@@ -68,6 +71,34 @@ def find_bday_of_char_handler(message):
     send_bday_of_char(message)
 
 
+@bot.callback_query_handler(func=lambda call: True)
+def callback_query(call):
+    if call.data == "jan":
+        send_bdays_of_selected_month(call, "Январь")
+    elif call.data == "feb":
+        send_bdays_of_selected_month(call, "Февраль")
+    elif call.data == "mar":
+        send_bdays_of_selected_month(call, "Март")
+    elif call.data == "apr":
+        send_bdays_of_selected_month(call, "Апрель")
+    elif call.data == "may":
+        send_bdays_of_selected_month(call, "Май")
+    elif call.data == "jun":
+        send_bdays_of_selected_month(call, "Июнь")
+    elif call.data == "jul":
+        send_bdays_of_selected_month(call, "Июль")
+    elif call.data == "aug":
+        send_bdays_of_selected_month(call, "Август")
+    elif call.data == "sep":
+        send_bdays_of_selected_month(call, "Сентябрь")
+    elif call.data == "oct":
+        send_bdays_of_selected_month(call, "Октябрь")
+    elif call.data == "nov":
+        send_bdays_of_selected_month(call, "Ноябрь")
+    elif call.data == "dec":
+        send_bdays_of_selected_month(call, "Декабрь")
+
+
 @bot.message_handler(content_types=['text'])
 # заменить на inline кнопки выбор месяца (с inline пока не получилось)
 def get_text_messages(message):
@@ -78,19 +109,11 @@ def get_text_messages(message):
     elif message.text == text_for_btn_that_month_bdays:
         send_that_month_bdays(message)
     elif message.text == text_for_btn_selected_month_bdays:
-        send_selected_month_bdays(message)
-    elif message.text == "Январь" or message.text == "Февраль" or message.text == "Март" or message.text == "Апрель" \
-            or message.text == "Май" or message.text == "Июнь" or message.text == "Июль" or message.text == "Август" \
-            or message.text == "Сентябрь" or message.text == "Октябрь" or message.text == "Ноябрь" \
-            or message.text == "Декабрь":
-        bot.send_message(message.chat.id, 'Да, это тоже в процессе разработки ⚙️')
+        send_month_menu(message)
     elif message.text == text_for_btn_bday_closest_to_my_bday:
         send_bday_closest_to_my_bday(message)
     elif message.text == text_for_btn_find_bday_of_char:
         send_bday_of_char(message)
-    elif message.text == "Вернуться в главное меню":
-        bot.send_message(message.chat.id, text="Вы вернулись в главное меню", reply_markup=main_menu())
-
     else:
         bot.send_message(message.chat.id, "Я тебя не понимаю. Напиши /help или /about")
 
@@ -114,7 +137,7 @@ def send_that_month_bdays(message):
     bot.send_message(message.chat.id, '⚙ Эта функция в процессе разработки ⚙️')
 
 
-def send_selected_month_bdays(message):
+def send_month_menu(message):
     bot.send_message(message.chat.id, text="Какой месяц интересует?", reply_markup=month_menu())
 
 
@@ -124,6 +147,14 @@ def send_bday_closest_to_my_bday(message):
 
 def send_bday_of_char(message):
     bot.send_message(message.chat.id, 'Я бы с радостью рассказал, но пока не умею 😢️')
+
+
+def send_bdays_of_selected_month(call, month):
+    month = morph.parse(month)[0]
+    month_loct = month.inflect({'loct'})
+    bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                          text="Дни рождения в {month}".format(month=month_loct.word),
+                          reply_markup=month_menu())
 
 
 def main_menu():
@@ -141,22 +172,22 @@ def main_menu():
 
 
 def month_menu():
-    month_keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    btn_jan = types.KeyboardButton("Январь")
-    btn_feb = types.KeyboardButton("Февраль")
-    btn_mar = types.KeyboardButton("Март")
-    btn_apr = types.KeyboardButton("Апрель")
-    btn_may = types.KeyboardButton("Май")
-    btn_jun = types.KeyboardButton("Июнь")
-    btn_jul = types.KeyboardButton("Июль")
-    btn_aug = types.KeyboardButton("Август")
-    btn_sep = types.KeyboardButton("Сентябрь")
-    btn_oct = types.KeyboardButton("Октябрь")
-    btn_nov = types.KeyboardButton("Ноябрь")
-    btn_dec = types.KeyboardButton("Декабрь")
-    btn_back = types.KeyboardButton("Вернуться в главное меню")
+    month_keyboard = types.InlineKeyboardMarkup()
+    month_keyboard.row_width = 3
+    btn_jan = types.InlineKeyboardButton("Январь", callback_data="jan")
+    btn_feb = types.InlineKeyboardButton("Февраль", callback_data="feb")
+    btn_mar = types.InlineKeyboardButton("Март", callback_data="mar")
+    btn_apr = types.InlineKeyboardButton("Апрель", callback_data="apr")
+    btn_may = types.InlineKeyboardButton("Май", callback_data="may")
+    btn_jun = types.InlineKeyboardButton("Июнь", callback_data="jun")
+    btn_jul = types.InlineKeyboardButton("Июль", callback_data="jul")
+    btn_aug = types.InlineKeyboardButton("Август", callback_data="aug")
+    btn_sep = types.InlineKeyboardButton("Сентябрь", callback_data="sep")
+    btn_oct = types.InlineKeyboardButton("Октябрь", callback_data="oct")
+    btn_nov = types.InlineKeyboardButton("Ноябрь", callback_data="nov")
+    btn_dec = types.InlineKeyboardButton("Декабрь", callback_data="dec")
     month_keyboard.add(btn_jan, btn_feb, btn_mar, btn_apr, btn_may, btn_jun, btn_jul, btn_aug, btn_sep,
-                       btn_oct, btn_nov, btn_dec, btn_back)
+                       btn_oct, btn_nov, btn_dec)
     return month_keyboard
 
 
