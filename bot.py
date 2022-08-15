@@ -14,7 +14,21 @@ bot = telebot.TeleBot(TOKEN, parse_mode='HTML')
 
 time_of_msg = time(23, 10)  # 23:10:00 по МСК, время, после которого нужно публиковать сообщения
 
-birthdays_and_names = {'01.06': ["Итто", "Паймон"], '24.07': ["Сиканоин Хэйдзо"], '15.08': ["Коллеи"]}
+birthdays_and_names = {'09.01': ["Тома"],
+                       '14.02': ["Бэй Доу"],
+                       '03.03': ["Ци Ци"],
+                       '04.04': ["Элой"],
+                       '21.05': ["Юнь Цзинь"],
+                       '01.06': ["Итто", "Паймон"],
+                       '09.06': ["Лиза"],
+                       '14.07': ["Кудзё Сара"],
+                       '24.07': ["Сиканоин Хэйдзо"],
+                       '15.08': ["Коллеи"],
+                       '26.08': ["Нин Гуан"],
+                       '09.09': ["Рэйзор"],
+                       '25.10': ["Эола"],
+                       '30.11': ["Кэйа"],
+                       '02.12': ["Гань Юй"]}
 
 text_for_btn_hello = "👋 Поздороваться"
 text_for_btn_closest_bday = "❓ Ближайший ДР"
@@ -73,34 +87,38 @@ def find_bday_of_char_handler(message):
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_query(call):
-    if call.data == "jan":
-        send_bdays_of_selected_month(call, "Январь")
-    elif call.data == "feb":
-        send_bdays_of_selected_month(call, "Февраль")
-    elif call.data == "mar":
-        send_bdays_of_selected_month(call, "Март")
-    elif call.data == "apr":
-        send_bdays_of_selected_month(call, "Апрель")
-    elif call.data == "may":
-        send_bdays_of_selected_month(call, "Май")
-    elif call.data == "jun":
-        send_bdays_of_selected_month(call, "Июнь")
-    elif call.data == "jul":
-        send_bdays_of_selected_month(call, "Июль")
-    elif call.data == "aug":
-        send_bdays_of_selected_month(call, "Август")
-    elif call.data == "sep":
-        send_bdays_of_selected_month(call, "Сентябрь")
-    elif call.data == "oct":
-        send_bdays_of_selected_month(call, "Октябрь")
-    elif call.data == "nov":
-        send_bdays_of_selected_month(call, "Ноябрь")
-    elif call.data == "dec":
-        send_bdays_of_selected_month(call, "Декабрь")
+    try:
+        if call.data == "jan":
+            send_bdays_of_selected_month(call, "Январь")
+        elif call.data == "feb":
+            send_bdays_of_selected_month(call, "Февраль")
+        elif call.data == "mar":
+            send_bdays_of_selected_month(call, "Март")
+        elif call.data == "apr":
+            send_bdays_of_selected_month(call, "Апрель")
+        elif call.data == "may":
+            send_bdays_of_selected_month(call, "Май")
+        elif call.data == "jun":
+            send_bdays_of_selected_month(call, "Июнь")
+        elif call.data == "jul":
+            send_bdays_of_selected_month(call, "Июль")
+        elif call.data == "aug":
+            send_bdays_of_selected_month(call, "Август")
+        elif call.data == "sep":
+            send_bdays_of_selected_month(call, "Сентябрь")
+        elif call.data == "oct":
+            send_bdays_of_selected_month(call, "Октябрь")
+        elif call.data == "nov":
+            send_bdays_of_selected_month(call, "Ноябрь")
+        elif call.data == "dec":
+            send_bdays_of_selected_month(call, "Декабрь")
+    except telebot.apihelper.ApiTelegramException:
+        # если человек 2 раза подряд нажмет на одну и ту же кнопку, бот выбрасывает исключение, вот и ловим его
+        bot.answer_callback_query(call.id, "Не нажимай дважды на одну и ту же кнопку, пожалуйста")
+        pass
 
 
 @bot.message_handler(content_types=['text'])
-# заменить на inline кнопки выбор месяца (с inline пока не получилось)
 def get_text_messages(message):
     if message.text == text_for_btn_hello or message.text.lower() == "hello" or message.text.lower() == "привет":
         send_hello_msg(message)
@@ -134,7 +152,15 @@ def send_closest_bday(message):
 
 
 def send_that_month_bdays(message):
-    bot.send_message(message.chat.id, '⚙ Эта функция в процессе разработки ⚙️')
+    current_month = str(date.today())[5:7]
+    names_of_chars = "Дни рождения в этом месяце:\n\n"
+    for key in birthdays_and_names.keys():
+        month = key[3:]
+        if current_month == month:
+            names = birthdays_and_names[key]
+            for name in names:
+                names_of_chars += "{bday}: {name}\n".format(bday=key, name=name)
+    bot.send_message(message.chat.id, names_of_chars)
 
 
 def send_month_menu(message):
@@ -146,10 +172,12 @@ def send_bday_closest_to_my_bday(message):
 
 
 def send_bday_of_char(message):
+    # для этой фичи надо тоже инлайн кнопки сделать (которые должны будут динамически формироваться на основе словаря)
     bot.send_message(message.chat.id, 'Я бы с радостью рассказал, но пока не умею 😢️')
 
 
 def send_bdays_of_selected_month(call, month):
+    # придумать, как перегонять текстовый формат месяца в числовой ("январь" -> "01"). Мб с помощью словаря
     month = morph.parse(month)[0]
     month_loct = month.inflect({'loct'})
     bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
