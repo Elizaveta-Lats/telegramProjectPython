@@ -14,6 +14,9 @@ bot = telebot.TeleBot(TOKEN, parse_mode='HTML')
 
 time_of_msg = time(23, 10)  # 23:10:00 по МСК, время, после которого нужно публиковать сообщения
 
+month_dict = {'01': "Январь", '02': "Февраль", '03': "Март", '04': "Апрель", '05': "Май", '06': "Июнь",
+              '07': "Июль", '08': "Август", '09': "Сентябрь", '10': "Октябрь", '11': "Ноябрь", '12': "Декабрь"}
+
 birthdays_and_names = {'09.01': ["Тома"],
                        '14.02': ["Бэй Доу"],
                        '03.03': ["Ци Ци"],
@@ -154,20 +157,8 @@ def send_closest_bday(message):
 def send_that_month_bdays(message):
     current_month = str(date.today())[5:7]
     names_of_chars = "Дни рождения в этом месяце:\n\n"
-    for key in birthdays_and_names.keys():
-        month = key[3:]
-        if current_month == month:
-            names = birthdays_and_names[key]
-            names_one_day = ""
-            for name in names:
-                if len(names) > 1:
-                    names_one_day += name + ", "
-            if names_one_day == "":
-                names_of_chars += "{bday}: {name}\n".format(bday=key, name=names[0])
-            else:
-                names_one_day = names_one_day[:-2]
-                names_of_chars += "{bday}: {name}\n".format(bday=key, name=names_one_day)
-    bot.send_message(message.chat.id, names_of_chars)
+    text_of_msg = find_bdays_in_month(current_month, names_of_chars)
+    bot.send_message(message.chat.id, text_of_msg)
 
 
 def send_month_menu(message):
@@ -184,12 +175,35 @@ def send_bday_of_char(message):
 
 
 def send_bdays_of_selected_month(call, month):
-    # придумать, как перегонять текстовый формат месяца в числовой ("январь" -> "01"). Мб с помощью словаря
-    month = morph.parse(month)[0]
-    month_loct = month.inflect({'loct'})
+    month_analyse = morph.parse(month)[0]
+    month_loct = month_analyse.inflect({'loct'})  # предложный падеж
+
+    digit_month = ''
+    for key, value in month_dict.items():  # перевод текстового формата названия месяца в числовой (январь -> 01)
+        if month == value:
+            digit_month = key
+    names_of_chars = "Дни рождения в {month}:\n\n".format(month=month_loct.word)
+    text_of_msg = find_bdays_in_month(digit_month, names_of_chars)
     bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
-                          text="Дни рождения в {month}".format(month=month_loct.word),
+                          text=text_of_msg,
                           reply_markup=month_menu())
+
+
+def find_bdays_in_month(required_month, names_of_chars):
+    for key in birthdays_and_names.keys():
+        month_of_bday = key[3:]
+        if required_month == month_of_bday:
+            names = birthdays_and_names[key]
+            names_one_day = ""
+            if len(names) > 1:
+                for name in names:
+                    names_one_day += name + ", "
+            if names_one_day == "":
+                names_of_chars += "{bday}: {name}\n".format(bday=key, name=names[0])
+            else:
+                names_one_day = names_one_day[:-2]
+                names_of_chars += "{bday}: {name}\n".format(bday=key, name=names_one_day)
+    return names_of_chars
 
 
 def main_menu():
