@@ -23,7 +23,7 @@ birthdays_and_names = {'09.01': ["Тома"],
                        '09.06': ["Лиза"],
                        '14.07': ["Кудзё Сара"],
                        '24.07': ["Сиканоин Хэйдзо"],
-                       '15.08': ["Коллеи"],
+                       '15.08': ["Коллеи", "Тигнари"],
                        '26.08': ["Нин Гуан"],
                        '09.09': ["Рэйзор"],
                        '25.10': ["Эола"],
@@ -158,8 +158,15 @@ def send_that_month_bdays(message):
         month = key[3:]
         if current_month == month:
             names = birthdays_and_names[key]
+            names_one_day = ""
             for name in names:
-                names_of_chars += "{bday}: {name}\n".format(bday=key, name=name)
+                if len(names) > 1:
+                    names_one_day += name + ", "
+            if names_one_day == "":
+                names_of_chars += "{bday}: {name}\n".format(bday=key, name=names[0])
+            else:
+                names_one_day = names_one_day[:-2]
+                names_of_chars += "{bday}: {name}\n".format(bday=key, name=names_one_day)
     bot.send_message(message.chat.id, names_of_chars)
 
 
