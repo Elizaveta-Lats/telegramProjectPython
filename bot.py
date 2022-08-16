@@ -91,7 +91,7 @@ def about_handler(message):
                                       "Для этого тебе нужно всего лишь нажать на кнопки внизу!\n\n"
                                       "Кроме того, в этом канале https://t.me/birthdaysGenshin "
                                       "я буду тебе напоминать про дни рождения "
-                                      "персонажей Genshin Impact. Переходи туда!")
+                                      "персонажей Genshin Impact. Переходи туда!", reply_markup=main_menu())
 
 
 @bot.message_handler(commands=['hello'])
@@ -183,7 +183,8 @@ def send_birthday_msg(name):
 
 
 def send_hello_msg(message):
-    bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAEFj9pi-XwJ6DuPzfFzrNhgFAo74cNd6gACPw8AAnqS-EtUlG9v__OqzSkE')
+    bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAEFj9pi-XwJ6DuPzfFzrNhgFAo74cNd6gACPw8AAnqS-EtUlG9v__OqzSkE',
+                     reply_markup=main_menu())
 
 
 def send_closest_bday(message):
@@ -249,14 +250,15 @@ def send_closest_bday(message):
     elif len(closest_bday_persons) == 1 and delta > 0:
         celebrate = "будет праздновать"
 
-    bot.send_message(message.chat.id, f"{when}, {date_of_closest_bday}, {chars} {celebrate} свой день рождения!")
+    bot.send_message(message.chat.id, f"{when}, {date_of_closest_bday}, {chars} {celebrate} свой день рождения!",
+                     reply_markup=main_menu())
 
 
 def send_that_month_bdays(message):
     current_month = str(date.today())[5:7]
     names_of_chars = "Дни рождения в этом месяце:\n\n"
     text_of_msg = find_bdays_in_month(current_month, names_of_chars)
-    bot.send_message(message.chat.id, text_of_msg)
+    bot.send_message(message.chat.id, text_of_msg, reply_markup=main_menu())
 
 
 def send_month_menu(message):
@@ -264,12 +266,12 @@ def send_month_menu(message):
 
 
 def send_bday_closest_to_my_bday(message):
-    bot.send_message(message.chat.id, '⚙ Эта функция очень нескоро будет готова 😢️')
+    bot.send_message(message.chat.id, '⚙ Эта функция очень нескоро будет готова 😢️', reply_markup=main_menu())
 
 
 def send_bday_of_char(message):
     # для этой фичи надо тоже инлайн кнопки сделать (которые должны будут динамически формироваться на основе словаря)
-    bot.send_message(message.chat.id, 'Я бы с радостью рассказал, но пока не умею 😢️')
+    bot.send_message(message.chat.id, 'Я бы с радостью рассказал, но пока не умею 😢️', reply_markup=main_menu())
 
 
 def send_bdays_of_selected_month(call, month):
