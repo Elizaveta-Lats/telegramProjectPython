@@ -126,7 +126,6 @@ def send_bday_of_char(call):
             break
     # перевод числового обозначения месяца в текстовый в родительном падеже (09 -> сентября)
     month = bday_of_char[3:]
-    bday_of_char = bday_of_char[:2]
     month_text = ""
     for key, value in month_dict.items():
         if key == month:
@@ -134,6 +133,11 @@ def send_bday_of_char(call):
             break
     month_text = morph.parse(month_text)[0]
     month_text = month_text.inflect({'gent'})  # родительный падеж
+
+    # если день формата 01, 02, .., 09, то обрезаем 0 в начале
+    bday_of_char = bday_of_char[:2]
+    if bday_of_char[0] == '0':
+        bday_of_char = bday_of_char[1:]
 
     bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
                           text=f"{call.data} празднует свой день рождения {bday_of_char} {month_text.word}",
