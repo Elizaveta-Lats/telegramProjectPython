@@ -52,7 +52,7 @@ def bdays_closest_to_my_bday_handler(message):
 
 @bot.message_handler(commands=['findbdayofchar'])
 def find_bday_of_char_handler(message):
-    send_bday_of_char(message)
+    send_alphabet(message)
 
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -82,6 +82,14 @@ def callback_query(call):
             send_bdays_of_selected_month(call, "Ноябрь")
         elif call.data == "dec":
             send_bdays_of_selected_month(call, "Декабрь")
+        # дальше блок проверок, охватывающих функционал поиска ДР персонажа
+        elif len(call.data) == 1:
+            send_list_of_chars(call)
+        elif call.data == 'back':
+            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                                  text='Выберите первую букву имени персонажа', reply_markup=alphabet_menu())
+        else:  # сюда улетит, когда выбрано имя
+            send_bday_of_char(call)
     except telebot.apihelper.ApiTelegramException:
         # если человек 2 раза подряд нажмет на одну и ту же кнопку, бот выбрасывает исключение, вот и ловим его
         bot.answer_callback_query(call.id, "Не нажимай дважды на одну и ту же кнопку, пожалуйста")
@@ -101,7 +109,7 @@ def get_text_messages(message):
     elif message.text == text_for_btn_bday_closest_to_my_bday:
         send_bday_closest_to_my_bday(message)
     elif message.text == text_for_btn_find_bday_of_char:
-        send_bday_of_char(message)
+        send_alphabet(message)
     else:
         bot.send_message(message.chat.id, "Я тебя не понимаю. Напиши /help или /about")
 
