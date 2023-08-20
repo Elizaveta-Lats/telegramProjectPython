@@ -85,9 +85,9 @@ def callback_query(call):
         # дальше блок проверок, охватывающих функционал поиска ДР персонажа
         elif len(call.data) == 1:
             send_list_of_chars(call)
-        elif call.data == 'back':
+        elif call.data == "back":
             bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
-                                  text='Выберите первую букву имени персонажа', reply_markup=alphabet_menu())
+                                  text="Выберите первую букву имени персонажа", reply_markup=alphabet_menu())
         else:  # сюда улетит, когда выбрано имя
             send_bday_of_char(call)
     except telebot.apihelper.ApiTelegramException:
