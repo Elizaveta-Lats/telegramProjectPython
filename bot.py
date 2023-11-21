@@ -1,4 +1,3 @@
-from threading import Thread
 from methods import *
 
 """
@@ -10,7 +9,7 @@ from methods import *
 
 @bot.message_handler(commands=['start', 'go'])
 def start_handler(message):
-    bot.send_message(message.chat.id, 'Привет, когда я вырасту, я буду сообщать про ДР персонажей геншина',
+    bot.send_message(message.chat.id, 'Привет, с моей помощью ты легко сможешь узнать, когда день рождения у того или иного персонажа Genshin Impact 😊',
                      reply_markup=main_menu())
     bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAEFj6Zi-UrjcS6F5m3hXB44mFi_KPDn2wACdw0AAnDa8UsVqatk3kgIuSkE')
 
@@ -114,7 +113,6 @@ def get_text_messages(message):
         bot.send_message(message.chat.id, "Я тебя не понимаю. Напиши /help или /about")
 
 
-thread_time = Thread(target=check_time)  # поток для проверки времени и публикации постов
-thread_time.start()
-
-bot.polling(none_stop=True, interval=0)  # поток для проверки сообщений, написанных боту в личку
+def handler(event, _):
+    message = telebot.types.Update.de_json(event['body'])
+    bot.process_new_updates([message])
