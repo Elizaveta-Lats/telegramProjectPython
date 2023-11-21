@@ -1,5 +1,6 @@
 import os
 from datetime import datetime, date
+import calendar
 import telebot
 import sqlite3
 import pymorphy2
@@ -119,7 +120,8 @@ def send_bday_of_char(call):
     cursor.execute(f'SELECT * FROM birthdays where name = "{call.data}"')
     char = cursor.fetchone()  # кортеж
     # перевод числового обозначения месяца в текстовый в родительном падеже (09 -> сентября)
-    month = str(char[2]) if len(str(char[2])) == 2 else '0' + str(char[2])
+    bday_format = datetime.strptime(char[1], "%Y-%m-%d").date()
+    month = str(bday_format.month) if len(str(bday_format.month)) == 2 else '0' + str(bday_format.month)
     month_text = ""
     for key, value in month_dict.items():
         if key == month:
@@ -129,7 +131,7 @@ def send_bday_of_char(call):
     month_text = month_text.inflect({'gent'})  # родительный падеж
 
     bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
-                          text=f"{call.data} празднует свой день рождения {char[1]} {month_text.word}",
+                          text=f"{call.data} празднует свой день рождения {bday_format.day} {month_text.word}",
                           reply_markup=btn_back_to_start())
 
 
@@ -166,15 +168,16 @@ def send_bdays_of_selected_month(call, month):
 
 def find_bdays_in_month(required_month, names_of_chars):
     """ ищет дни рождения в переданном ему месяце """
-    cursor.execute(f'SELECT * FROM birthdays where month = {required_month} ORDER BY day')
+    _, last_day = calendar.monthrange(date.today().year, int(required_month))
+    start_date = '"' + str(date(2020, int(required_month), 1)) + '"'
+    end_date = '"' + str(date(2020, int(required_month), last_day)) + '"'
+    cursor.execute(f'SELECT * FROM birthdays WHERE bday BETWEEN {start_date} AND {end_date} ORDER BY bday')
     characters = cursor.fetchall()  # лист кортежей
     for char in characters:
-        day = str(char[1])
-        if len(day) == 1:  # "приклеиваем" 0 спереди, если день 1-9
-            day = '0' + day
-        month = str(char[2])
-        if len(month) == 1:  # "приклеиваем" 0 спереди, если месяц 1-9
-            month = '0' + month
+        bday_format = datetime.strptime(char[1], "%Y-%m-%d").date()
+        day = '0' + str(bday_format.day) if len(str(bday_format.day)) == 1 else str(bday_format.day)
+        month = "0" + str(bday_format.month) if len(str(bday_format.month)) == 1 else str(bday_format.month)
+
         birthday = f"{day}.{month}"
         names_of_chars += "{bday}: {name}\n".format(bday=birthday, name=char[0])
     return names_of_chars
