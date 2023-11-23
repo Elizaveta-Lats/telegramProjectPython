@@ -3,12 +3,12 @@ from telebot import types
 alphabet_name_list = ['А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ё', 'И', 'К', 'Л', 'М',
                       'Н', 'П', 'Р', 'С', 'Т', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Э', 'Ю', 'Я']
 
-text_for_btn_hello = "👋 Поздороваться"
-text_for_btn_closest_bday = "🥳 Ближайший ДР"
-text_for_btn_that_month_bdays = "🎉 Дни рождения в этом месяце"
-text_for_btn_selected_month_bdays = "🎂 Дни рождения в заданном месяце"
-text_for_btn_bday_closest_to_my_bday = "🤔 Узнать, чей ДР ближе всего к моему"
-text_for_btn_find_bday_of_char = "🔍 Узнать ДР персонажа"
+text_for_btn_hello = '👋 Поздороваться'
+text_for_btn_closest_bday = '🥳 Ближайший ДР'
+text_for_btn_that_month_bdays = '🎉 Дни рождения в этом месяце'
+text_for_btn_selected_month_bdays = '🎂 Дни рождения в заданном месяце'
+text_for_btn_bday_closest_to_my_bday = '🤔 Узнать, чей ДР ближе всего к моему'
+text_for_btn_find_bday_of_char = '🔍 Узнать ДР персонажа'
 
 
 def main_menu():
@@ -30,18 +30,18 @@ def month_menu():
     """ создает инлайн клавиатуру с месяцами """
     month_keyboard = types.InlineKeyboardMarkup()
     month_keyboard.row_width = 3
-    btn_jan = types.InlineKeyboardButton("Январь", callback_data="jan")
-    btn_feb = types.InlineKeyboardButton("Февраль", callback_data="feb")
-    btn_mar = types.InlineKeyboardButton("Март", callback_data="mar")
-    btn_apr = types.InlineKeyboardButton("Апрель", callback_data="apr")
-    btn_may = types.InlineKeyboardButton("Май", callback_data="may")
-    btn_jun = types.InlineKeyboardButton("Июнь", callback_data="jun")
-    btn_jul = types.InlineKeyboardButton("Июль", callback_data="jul")
-    btn_aug = types.InlineKeyboardButton("Август", callback_data="aug")
-    btn_sep = types.InlineKeyboardButton("Сентябрь", callback_data="sep")
-    btn_oct = types.InlineKeyboardButton("Октябрь", callback_data="oct")
-    btn_nov = types.InlineKeyboardButton("Ноябрь", callback_data="nov")
-    btn_dec = types.InlineKeyboardButton("Декабрь", callback_data="dec")
+    btn_jan = types.InlineKeyboardButton('Январь', callback_data='jan')
+    btn_feb = types.InlineKeyboardButton('Февраль', callback_data='feb')
+    btn_mar = types.InlineKeyboardButton('Март', callback_data='mar')
+    btn_apr = types.InlineKeyboardButton('Апрель', callback_data='apr')
+    btn_may = types.InlineKeyboardButton('Май', callback_data='may')
+    btn_jun = types.InlineKeyboardButton('Июнь', callback_data='jun')
+    btn_jul = types.InlineKeyboardButton('Июль', callback_data='jul')
+    btn_aug = types.InlineKeyboardButton('Август', callback_data='aug')
+    btn_sep = types.InlineKeyboardButton('Сентябрь', callback_data='sep')
+    btn_oct = types.InlineKeyboardButton('Октябрь', callback_data='oct')
+    btn_nov = types.InlineKeyboardButton('Ноябрь', callback_data='nov')
+    btn_dec = types.InlineKeyboardButton('Декабрь', callback_data='dec')
     month_keyboard.add(btn_jan, btn_feb, btn_mar, btn_apr, btn_may, btn_jun, btn_jul, btn_aug, btn_sep,
                        btn_oct, btn_nov, btn_dec)
     return month_keyboard
@@ -73,7 +73,7 @@ def alphabet_menu():
 def btn_back_to_start():
     """ создает инлайн клавиатуру с кнопкой "Вернуться в начало" """
     one_btn = types.InlineKeyboardMarkup()
-    one_btn.add(types.InlineKeyboardButton("Вернуться в начало", callback_data="back"))
+    one_btn.add(types.InlineKeyboardButton('Вернуться в начало', callback_data='back'))
     return one_btn
 
 # def create_alphabet_list():
