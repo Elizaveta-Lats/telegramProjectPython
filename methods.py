@@ -81,7 +81,7 @@ def send_closest_bday(message):
         when = 'Послезавтра'
     else:
         parsed_word = morph.parse('день')[0]
-        when = parsed_word.make_agree_with_number(delta).word
+        when = f'Через {delta} {parsed_word.make_agree_with_number(delta).word}'
 
     # задаем число (ед./множ.) и время (наст./будущ.) для сказуемого
     celebrate = ''
