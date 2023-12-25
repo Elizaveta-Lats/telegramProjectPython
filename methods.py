@@ -203,7 +203,7 @@ def send_bdays_of_selected_month(call, month):
 
 def find_bdays_in_month(required_month, names_of_chars):
     """ ищет дни рождения в переданном ему месяце """
-    _, last_day = calendar.monthrange(date.today().year, int(required_month))
+    _, last_day = calendar.monthrange(2020, int(required_month))
     start_date = '"' + str(date(2020, int(required_month), 1)) + '"'
     end_date = '"' + str(date(2020, int(required_month), last_day)) + '"'
     cursor.execute(f'SELECT * FROM birthdays WHERE bday BETWEEN {start_date} AND {end_date} ORDER BY bday')
