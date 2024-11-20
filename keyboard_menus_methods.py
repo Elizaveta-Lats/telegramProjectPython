@@ -1,7 +1,7 @@
 from telebot import types
 
 alphabet_name_list = ['А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ё', 'И', 'К', 'Л', 'М',
-                      'Н', 'П', 'Р', 'С', 'Т', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Э', 'Ю', 'Я']
+                      'Н', 'О', 'П', 'Р', 'С', 'Т', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Э', 'Ю', 'Я']
 
 text_for_btn_hello = '👋 Поздороваться'
 text_for_btn_closest_bday = '🥳 Ближайший ДР'
@@ -58,7 +58,7 @@ def alphabet_menu():
     из-за чего всё выстраивается в 1 колонку. Поэтому надо самим создать список списков
     """
     for letter in alphabet_name_list:
-        if (alphabet_name_list.index(letter)+1) % 4 != 0:
+        if (alphabet_name_list.index(letter)+1) % 5 != 0:
             row.append(types.InlineKeyboardButton(letter, callback_data=letter))
         else:
             row.append(types.InlineKeyboardButton(letter, callback_data=letter))
